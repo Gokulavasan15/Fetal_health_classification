@@ -7,4 +7,4 @@ entry_points:
     parameters:
       n_estimators: int
       max_depth: int
-    command: "python test.py {n_estimators} {max_depth}"
+    command: "python test1.py {n_estimators} {max_depth}"

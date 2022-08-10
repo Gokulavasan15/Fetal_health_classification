@@ -5,6 +5,6 @@ conda_env: conda.yaml
 entry_points:
   main:
     parameters:
-      n_estimators: {int}]
+      n_estimators: {int}
       max_depth: {nt}
     command: "python test1.py {n_estimators} {max_depth}"

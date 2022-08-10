@@ -52,8 +52,8 @@ if __name__ == "__main__":
     np.random.seed(40)
     mlflow.set_tracking_uri("http://localhost:8000")
     classifiers=[LogisticRegression(),RandomForestClassifier(),DecisionTreeClassifier(), SVC()]
-    ne = int(sys.argv[1])
-    md = int(sys.argv[2])
+    ne = int(sys.argv[1]) if len(sys.argv) > 1 else 0.5
+    md = int(sys.argv[2])  if len(sys.argv) > 2 else 0.5
     with mlflow.start_run(run_name="Fetal Health"):
         classifier=RandomForestClassifier(n_estimators=ne,max_depth=md,random_state=42)
         model_lr=classifier.fit(X_train, y_train)

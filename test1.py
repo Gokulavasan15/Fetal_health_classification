@@ -26,7 +26,7 @@ import sys
 import warnings
 from urllib.parse import urlparse
 from imblearn.over_sampling import SMOTE
-import psycopg2
+from sqlalchemy import create_engine
 
 
 np.random.seed(0)
@@ -56,7 +56,7 @@ X_train, X_test, y_train,y_test = train_test_split(X_df,y_over,test_size=0.3,ran
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
-    mlflow.set_tracking_uri("http://localhost:8000")
+    mlflow.set_tracking_uri("http://10.5.0.5:8000")
     
     
     # ne = 150 
@@ -95,25 +95,18 @@ if __name__ == "__main__":
             mlflow.sklearn.log_model(model, "model")
 
 
-con = psycopg2.connect(database="mlflow", user='mlflow', password='mlflow', host='10.5.0.6', port= '5432')
-cur = con.cursor()
-for row in cur.execute("select run_uuid, max(value) as max_acc from latest_metrics \
-    where key='accuracy' \
-    group by key,run_uuid \
-    order by max_acc desc \
-    limit 1"):
-    run_id=row[0]
-    accuracy=row[1]
-    
-
-for row1 in cur.execute("select version from model_versions where run_id=(?)",(run_id,)):
-    
-    Version =row1[0]
-
+engine = create_engine('postgresql://mlflow:mlflow@10.5.0.6:5432/mlflow')
+run_id= pd.read_sql("select run_uuid, max(value) as max_acc from latest_metrics \
+     where key='accuracy' \
+     group by key,run_uuid \
+     order by max_acc desc \
+     limit 1",engine)['run_uuid'][0]
+vsn = pd.read_sql('select * from model_versions',engine)
+vsn = vsn[vsn["run_id"]==run_id].iloc[0,1]
 
 client = MlflowClient()
 client.transition_model_version_stage(
     name="Random_forest",
-    version= Version,
+    version= vsn,
     stage="Production"
 )

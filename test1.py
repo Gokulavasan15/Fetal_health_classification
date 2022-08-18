@@ -95,8 +95,7 @@ if __name__ == "__main__":
             mlflow.sklearn.log_model(model, "model")
 
 
-con = psycopg2.connect(database="mlflow", user='mlflow', password='mlflow', host='10.5.0.7', port= '5432'
-)
+con = psycopg2.connect(database="mlflow", user='mlflow', password='mlflow', host='10.5.0.7', port= '5432')
 cur = con.cursor()
 for row in cur.execute("select run_uuid, max(value) as max_acc from latest_metrics \
     where key='accuracy' \

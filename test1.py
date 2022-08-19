@@ -57,43 +57,43 @@ X_train, X_test, y_train,y_test = train_test_split(X_df,y_over,test_size=0.3,ran
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
-    mlflow.set_tracking_uri("http://localhost:8000")
+    #mlflow.set_tracking_uri("http://localhost:8000")
     
     
     # ne = 150 
     # md = 12
     ne = int(sys.argv[1]) if len(sys.argv) > 1 else 0.5
     md = int(sys.argv[2])  if len(sys.argv) > 2 else 0.5
-    with mlflow.start_run(run_name="Fetal Health"):
-        classifier=RandomForestClassifier(n_estimators=ne,max_depth=md,random_state=42)
-        model=classifier.fit(X_train, y_train)
-        y_pred = classifier.predict(X_test)
-        (precision,recall,f1,accuracy)=eval_metrics(y_test, y_pred)
 
-        print("  precision: %s" % precision)
-        print("  recall: %s" % recall)
-        print("  f1: %s" % f1)
-        print(" accuracy:%s"% accuracy)
+    classifier=RandomForestClassifier(n_estimators=ne,max_depth=md,random_state=42)
+    model=classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
+    (precision,recall,f1,accuracy)=eval_metrics(y_test, y_pred)
 
-        mlflow.log_param("n_estimators", ne)
-        mlflow.log_param("max_depth", md)
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("f1", f1)
-        mlflow.log_metric("accuracy", accuracy)
+    print("  precision: %s" % precision)
+    print("  recall: %s" % recall)
+    print("  f1: %s" % f1)
+    print(" accuracy:%s"% accuracy)
 
-        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+    mlflow.log_param("n_estimators", ne)
+    mlflow.log_param("max_depth", md)
+    mlflow.log_metric("precision", precision)
+    mlflow.log_metric("recall", recall)
+    mlflow.log_metric("f1", f1)
+    mlflow.log_metric("accuracy", accuracy)
 
-        # Model registry does not work with file store
-        if tracking_url_type_store != "file":
+    tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
-            # Register the model
-            # There are other ways to use the Model Registry, which depends on the use case,
-            # please refer to the doc for more information:
-            # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-            mlflow.sklearn.log_model(model, "model", registered_model_name="Random_forest")
-        else:
-            mlflow.sklearn.log_model(model, "model")
+    # Model registry does not work with file store
+    if tracking_url_type_store != "file":
+
+        # Register the model
+        # There are other ways to use the Model Registry, which depends on the use case,
+        # please refer to the doc for more information:
+        # https://mlflow.org/docs/latest/model-registry.html#api-workflow
+        mlflow.sklearn.log_model(model, "model", registered_model_name="Random_forest")
+    else:
+        mlflow.sklearn.log_model(model, "model")
 
 
 engine = create_engine('postgresql://mlflow:mlflow@10.5.0.6:5432/mlflow')

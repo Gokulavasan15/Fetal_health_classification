@@ -7,4 +7,4 @@ entry_points:
     parameters:
       n_estimators: {int}
       max_depth: {type:int,default:12}
-    command: "/opt/mlflow/utils test1.py {n_estimators} {max_depth}"
+    command: "/usr/local/bin/python test1.py {n_estimators} {max_depth}"

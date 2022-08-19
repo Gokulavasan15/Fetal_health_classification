@@ -57,7 +57,7 @@ X_train, X_test, y_train,y_test = train_test_split(X_df,y_over,test_size=0.3,ran
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
-    mlflow.set_tracking_uri("http://10.5.0.5:8000")
+    mlflow.set_tracking_uri("http://localhost:8000")
     
     
     # ne = 150 
